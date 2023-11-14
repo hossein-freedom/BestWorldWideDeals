@@ -2,6 +2,7 @@ package com.bwwd.BestWorldWideDeals.Controllers;
 
 import com.bwwd.BestWorldWideDeals.Models.Filter;
 import com.bwwd.BestWorldWideDeals.Models.Product;
+import com.bwwd.BestWorldWideDeals.Models.SearchCriteria;
 import com.bwwd.BestWorldWideDeals.Orchestrators.ProductOrchestrator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -109,8 +110,18 @@ public class ProductsController {
     )
 
     @ResponseBody
-    List<Product> getProductsByFilter(@RequestBody List<Filter> filters) {
-        return productRepository.getProductsByFilter(filters);
+    List<Product> getProductsByFilter(@RequestBody SearchCriteria searchCriteria) {
+        return productRepository.getProductsByFilter(searchCriteria);
     }
+    @RequestMapping(
+            value ="/getproductscountbyfilter",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
 
+    @ResponseBody
+    Long getProductsCountByFilter(@RequestBody List<Filter> filters) {
+        return productRepository.getProductsCountByFilter(filters);
+    }
 }

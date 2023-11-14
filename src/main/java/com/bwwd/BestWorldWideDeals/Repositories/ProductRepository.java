@@ -2,6 +2,7 @@ package com.bwwd.BestWorldWideDeals.Repositories;
 
 import com.bwwd.BestWorldWideDeals.Models.Filter;
 import com.bwwd.BestWorldWideDeals.Models.Product;
+import com.bwwd.BestWorldWideDeals.Models.SearchCriteria;
 import com.bwwd.BestWorldWideDeals.Models.Source;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -30,6 +31,8 @@ public interface ProductRepository extends JpaRepository<Product,Long >{
                       @Param("saleprice") Number saleprice, @Param("title") String title,
                       @Param("description") String description, @Param("enddate") Number enddate);
 
-    List<Product> findAllProducts(List<Filter> filters);
+    List<Product> findAllProducts(SearchCriteria searchCriteria);
+
+    Long findAllProductsCount(List<Filter> filters);
 
 }

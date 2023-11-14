@@ -1,6 +1,7 @@
 package com.bwwd.BestWorldWideDeals.Orchestrators;
 
 import com.bwwd.BestWorldWideDeals.Models.Filter;
+import com.bwwd.BestWorldWideDeals.Models.SearchCriteria;
 import com.bwwd.BestWorldWideDeals.Repositories.ProductRepository;
 import com.bwwd.BestWorldWideDeals.Models.Product;
 import lombok.NoArgsConstructor;
@@ -60,7 +61,11 @@ public class ProductOrchestrator {
 
     }
 
-    public List<Product> getProductsByFilter(List<Filter> filters){
-        return productRepository.findAllProducts(filters);
+    public List<Product> getProductsByFilter(SearchCriteria searchCriteria){
+        return productRepository.findAllProducts(searchCriteria);
+    }
+
+    public Long getProductsCountByFilter(List<Filter> filters){
+        return productRepository.findAllProductsCount(filters);
     }
 }
