@@ -18,7 +18,7 @@ import java.util.Objects;
 public class ProductsController {
 
     @Autowired
-    private ProductOrchestrator productRepository;
+    private ProductOrchestrator productOrchestrator;
 
     @RequestMapping(
             value ="/allproducts",
@@ -26,7 +26,7 @@ public class ProductsController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody
-    List<Product> getAllProducts() {    return productRepository.getAllProducts();   }
+    List<Product> getAllProducts() {    return productOrchestrator.getAllProducts();   }
 
     @RequestMapping(
             value ="/saveproducts",
@@ -36,7 +36,7 @@ public class ProductsController {
     )
 
     @ResponseBody
-    void saveProducts(@RequestBody List<Product> products) { productRepository.saveAllProducts(products); }
+    void saveProducts(@RequestBody List<Product> products) { productOrchestrator.saveAllProducts(products); }
 
     @RequestMapping(
             value ="/saveproduct",
@@ -47,7 +47,7 @@ public class ProductsController {
 
     @ResponseBody
     ResponseEntity<Map<String,Number>> saveProduct(@RequestBody Product product) {
-        Number pId = productRepository.saveProduct(product);
+        Number pId = productOrchestrator.saveProduct(product);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("productId", pId));
     }
 
@@ -59,7 +59,7 @@ public class ProductsController {
 
     @ResponseBody
     void deleteProduct(@PathVariable("id") Long id) {
-        productRepository.deleteProduct(id);
+        productOrchestrator.deleteProduct(id);
     }
 
     @RequestMapping(
@@ -71,7 +71,7 @@ public class ProductsController {
 
     @ResponseBody
     void deleteProducts(@RequestBody List<Long> ids) {
-        productRepository.deleteProducts(ids);
+        productOrchestrator.deleteProducts(ids);
     }
 
 
@@ -84,7 +84,7 @@ public class ProductsController {
 
     @ResponseBody
     void updateProduct(@RequestBody Product product) {
-        productRepository.updateProduct(product);
+        productOrchestrator.updateProduct(product);
     }
 
     @RequestMapping(
@@ -95,7 +95,7 @@ public class ProductsController {
 
     @ResponseBody
     ResponseEntity<Product> getProduct(@PathVariable("pid") Long pId) {
-        Product product = productRepository.getProductById(pId);
+        Product product = productOrchestrator.getProductById(pId);
         if(Objects.nonNull(product)){
             return ResponseEntity.status(HttpStatus.OK).body(product);
         }
@@ -111,7 +111,7 @@ public class ProductsController {
 
     @ResponseBody
     List<Product> getProductsByFilter(@RequestBody SearchCriteria searchCriteria) {
-        return productRepository.getProductsByFilter(searchCriteria);
+        return productOrchestrator.getProductsByFilter(searchCriteria);
     }
     @RequestMapping(
             value ="/getproductscountbyfilter",
@@ -122,6 +122,28 @@ public class ProductsController {
 
     @ResponseBody
     Long getProductsCountByFilter(@RequestBody List<Filter> filters) {
-        return productRepository.getProductsCountByFilter(filters);
+        return productOrchestrator.getProductsCountByFilter(filters);
+    }
+
+    @RequestMapping(
+            value ="/getproductcategories",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+
+    @ResponseBody
+    List<String> getProductCategories() {
+        return productOrchestrator.getProductCategories();
+    }
+
+    @RequestMapping(
+            value ="/getproductsubcategories/{category}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+
+    @ResponseBody
+    List<String> getProductSubCategories(@PathVariable("category") String category) {
+        return productOrchestrator.getProductSubCategories(category);
     }
 }

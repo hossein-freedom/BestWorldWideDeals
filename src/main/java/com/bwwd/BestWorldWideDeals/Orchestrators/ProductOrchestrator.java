@@ -68,4 +68,13 @@ public class ProductOrchestrator {
     public Long getProductsCountByFilter(List<Filter> filters){
         return productRepository.findAllProductsCount(filters);
     }
+
+    public List<String> getProductCategories(){
+        return productRepository.selectProductCategories();
+    }
+
+    public List<String> getProductSubCategories(String category){
+        return productRepository.selectProductSubCategories(category);
+    }
+
 }

@@ -31,6 +31,14 @@ public interface ProductRepository extends JpaRepository<Product,Long >{
                       @Param("saleprice") Number saleprice, @Param("title") String title,
                       @Param("description") String description, @Param("enddate") Number enddate);
 
+    @Modifying(clearAutomatically = true)
+    @Query(value = "Select Distinct category From product_details", nativeQuery = true)
+    List<String> selectProductCategories();
+
+    @Modifying(clearAutomatically = true)
+    @Query(value = "Select Distinct subcategory From product_details WHERE category = :category", nativeQuery = true)
+    List<String> selectProductSubCategories(@Param("category") String category);
+
     List<Product> findAllProducts(SearchCriteria searchCriteria);
 
     Long findAllProductsCount(List<Filter> filters);
