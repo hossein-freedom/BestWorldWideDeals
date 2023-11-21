@@ -47,10 +47,10 @@ public class Product {
     public Double price;
 
     @Column(name = "isonsale")
-    public Boolean isonsale;
+    public Boolean isOnSale;
 
     @Column(name = "saleprice")
-    public Double saleprice;
+    public Double salePrice;
 
     @Column(name = "title")
     public String title;
@@ -74,8 +74,8 @@ public class Product {
         this.affiliateLink = affiliateLink;
         this.email = email;
         this.price = price;
-        this.isonsale = isonsale;
-        this.saleprice = saleprice;
+        this.isOnSale = isonsale;
+        this.salePrice = saleprice;
         this.title = title;
         this.description = description;
         this.endDate = endDate;

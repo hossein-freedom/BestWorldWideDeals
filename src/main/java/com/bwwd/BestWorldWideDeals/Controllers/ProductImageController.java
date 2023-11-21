@@ -26,7 +26,7 @@ public class ProductImageController {
     @ResponseBody
     ResponseEntity<Map<String, Boolean>> uploadImages(
             @PathVariable("pid") Long pId,
-            @RequestPart  List<MultipartFile> images) {
+            @RequestPart List<MultipartFile> images) {
         return productImageRepository.saveImages(pId, images);
     }
 

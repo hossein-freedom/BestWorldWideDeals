@@ -51,8 +51,8 @@ public class ProductOrchestrator {
     public void updateProduct(Product product){
         productRepository.updateProduct(product.id,
                 product.source, product.bannerCode, product.isActive, product.category, product.subCategory,
-                product.sellerWebsite, product.affiliateLink, product.email, product.price, product.isonsale,
-                product.saleprice, product.title, product.description, product.endDate);
+                product.sellerWebsite, product.affiliateLink, product.email, product.price, product.isOnSale,
+                product.salePrice, product.title, product.description, product.endDate);
     }
 
     public Product getProductById(Long pId){

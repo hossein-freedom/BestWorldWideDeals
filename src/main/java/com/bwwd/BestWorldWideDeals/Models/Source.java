@@ -1,6 +1,6 @@
 package com.bwwd.BestWorldWideDeals.Models;
 
 public enum Source {
-    CLICKBANCK,
+    ClickBank,
     AMAZON
 }
