@@ -1,5 +1,6 @@
 package com.bwwd.BestWorldWideDeals.Controllers;
 
+import com.bwwd.BestWorldWideDeals.Models.IdsApiInput;
 import com.bwwd.BestWorldWideDeals.Models.ProductImage;
 import com.bwwd.BestWorldWideDeals.Orchestrators.ProductImageOrchestrator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,19 +33,19 @@ public class ProductImageController {
 
     @RequestMapping(
             value ="/deleteimages",
-            method = RequestMethod.POST,
+            method = RequestMethod.DELETE,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody
-    ResponseEntity<Map<Number, Boolean>> deleteImages(@RequestBody  List<Long> imageIds) {
-        return productImageRepository.deleteImages(imageIds);
+    ResponseEntity<Map<Number, Boolean>> deleteImages(@RequestBody IdsApiInput ids) {
+        return productImageRepository.deleteImages(ids.ids);
     }
 
 
     @RequestMapping(
             value ="/getimagesforproduct/{pid}",
-            method = RequestMethod.POST,
+            method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody

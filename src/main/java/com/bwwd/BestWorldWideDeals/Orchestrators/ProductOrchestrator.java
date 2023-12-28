@@ -5,10 +5,13 @@ import com.bwwd.BestWorldWideDeals.Models.SearchCriteria;
 import com.bwwd.BestWorldWideDeals.Repositories.ProductRepository;
 import com.bwwd.BestWorldWideDeals.Models.Product;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -16,6 +19,7 @@ import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Repository
+@Slf4j
 public class ProductOrchestrator {
     @Autowired
     private ProductRepository productRepository;
@@ -37,7 +41,7 @@ public class ProductOrchestrator {
         return savedProduct.id;
     }
 
-    public void deleteProduct(Long id){
+    public void deleteProduct(Long id) {
         List<Long> imageIds = productImageOrchestrator.getImages(id).stream().map( p -> p.id)
                         .collect(Collectors.toList());
         productImageOrchestrator.deleteImages(imageIds);

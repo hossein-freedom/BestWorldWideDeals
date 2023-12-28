@@ -26,7 +26,7 @@ public class ProductsController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody
-    List<Product> getAllProducts() {    return productOrchestrator.getAllProducts();   }
+    List<Product> getAllProducts() {  return productOrchestrator.getAllProducts();   }
 
     @RequestMapping(
             value ="/saveproducts",
@@ -53,18 +53,18 @@ public class ProductsController {
 
     @RequestMapping(
             value ="/deleteproduct/{id}",
-            method = RequestMethod.POST,
-            produces = MediaType.APPLICATION_JSON_VALUE
+            method = RequestMethod.DELETE
     )
 
     @ResponseBody
-    void deleteProduct(@PathVariable("id") Long id) {
+    ResponseEntity<Map<String,String>> deleteProduct(@PathVariable("id") Long id) {
         productOrchestrator.deleteProduct(id);
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("result","Product was succeessfully deleted."));
     }
 
     @RequestMapping(
             value ="/deleteproducts",
-            method = RequestMethod.POST,
+            method = RequestMethod.DELETE,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -77,7 +77,7 @@ public class ProductsController {
 
     @RequestMapping(
             value ="/updateproduct",
-            method = RequestMethod.POST,
+            method = RequestMethod.PUT,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )

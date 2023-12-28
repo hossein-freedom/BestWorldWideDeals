@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.regions.Region;
+
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +33,9 @@ public class ProductImageOrchestrator {
     public ResponseEntity<Map<String,Boolean>> saveImages(Long pId, List<MultipartFile> images){
        logger.info(String.format("Received request to save Images for pId: %s",pId));
        Map<String, Boolean> results = new HashMap<>();
+       if(!Files.exists(Constants.SYSTEM_IMAGES_ROOT_PATH.resolve(String.valueOf(pId)))) {
+            SystemStorageUtil.deleteAllInDirectory(Constants.SYSTEM_IMAGES_ROOT_PATH.resolve(String.valueOf(pId)));
+       }
        for(MultipartFile multipartFile: images){
            logger.info(String.format("Saving Image -> %s",multipartFile.getOriginalFilename()));
            try {

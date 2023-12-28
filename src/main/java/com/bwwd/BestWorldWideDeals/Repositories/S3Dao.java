@@ -16,8 +16,8 @@ import java.time.Duration;
 
 public class S3Dao {
     private static Logger logger = LoggerFactory.getLogger(S3Dao.class);
-    private static final String ACCESS_KEY  = "AKIA5N4IHKZKNSQI3YSF";
-    private static final String SECRET_KEY  = "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";
+    private static final String ACCESS_KEY  = "AKIA5N4IHKZKILFQOVT4";
+    private static final String SECRET_KEY  = "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";
     private static final String BUCKET_NAME = "bwwd-listing-images";
     public static boolean writeImageToS3(String folder,
                                       String imageName,
