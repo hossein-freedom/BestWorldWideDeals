@@ -7,6 +7,6 @@ public class SearchCriteria {
 
     public Page page;
 
-    public List<Filter> filters;
+    public PredicateNode predicateNode;
 
 }

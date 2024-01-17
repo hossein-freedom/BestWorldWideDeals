@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Component
@@ -61,9 +62,12 @@ public class Product {
     @Column(name = "enddate")
     public Long endDate;
 
+    @OneToMany(mappedBy = "p_id")
+    List<ProductImage> imageLinks;
+
     public Product(Long id, Source source, Boolean isActive, String bannerCode, String category, String subCategory,
                    String sellerWebsite, String affiliateLink, String email, Double price, Boolean isonsale,
-                   Double saleprice, String title, String description, Long endDate) {
+                   Double saleprice, String title, String description, Long endDate, List<ProductImage> imageLinks) {
         this.id = id;
         this.source = source;
         this.isActive = isActive;
@@ -79,5 +83,6 @@ public class Product {
         this.title = title;
         this.description = description;
         this.endDate = endDate;
+        this.imageLinks = imageLinks;
     }
 }

@@ -1,9 +1,6 @@
 package com.bwwd.BestWorldWideDeals.Repositories;
 
-import com.bwwd.BestWorldWideDeals.Models.Filter;
-import com.bwwd.BestWorldWideDeals.Models.Operators;
-import com.bwwd.BestWorldWideDeals.Models.Product;
-import com.bwwd.BestWorldWideDeals.Models.SearchCriteria;
+import com.bwwd.BestWorldWideDeals.Models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -24,15 +21,15 @@ public class ProductRepositoryImpl{
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<Product> findAllProducts(SearchCriteria searchCriteria) throws Exception {
-        List<Filter> filters = searchCriteria.filters;
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Product> query = cb.createQuery(Product.class);
-        Root<Product> product = query.from(Product.class);
+
+    private Predicate processFilterNode(FilterNode filterNode, CriteriaBuilder cb,
+                                        CriteriaQuery<Product> query, Root<Product> product) throws Exception{
+        Operand operand = filterNode.operand;
+        List<Filter> filters = filterNode.filters;
         List<Predicate> predicates = new ArrayList<>();
         List<Map.Entry<Boolean,In>> inClauses = new ArrayList<>();
         for (Filter filter : filters) {
-            if (filter.operator.equals(Operators.IN)) {
+            if (filter.operator.equals(Operator.IN)) {
                 try {
                     String className = Product.class.getField(filter.fieldName).getType().getName();
                     In inClause = cb.in(product.get(filter.fieldName));
@@ -79,28 +76,41 @@ public class ProductRepositoryImpl{
                 predicates.add(predicate);
             }
         }
-
         Predicate inCalusePredicate = null;
-        if(inClauses.size() >=2 ){
-            inCalusePredicate = cb.and(
-                    inClauses.get(0).getKey() ? cb.not(inClauses.get(0).getValue()) : inClauses.get(0).getValue(),
-                    inClauses.get(1).getKey() ? cb.not(inClauses.get(1).getValue()) : inClauses.get(1).getValue());
-            for(int i=2;i<inClauses.size();i++){
-                inCalusePredicate = cb.and(inCalusePredicate,
-                        inClauses.get(i).getKey() ? cb.not(inClauses.get(i).getValue()) : inClauses.get(i).getValue());
+        if(inClauses.size() >=2 ) {
+            inCalusePredicate = operand.equals(Operand.AND) ?
+                        cb.and(
+                            inClauses.get(0).getKey() ? cb.not(inClauses.get(0).getValue()) : inClauses.get(0).getValue(),
+                            inClauses.get(1).getKey() ? cb.not(inClauses.get(1).getValue()) : inClauses.get(1).getValue())
+                        :
+                        cb.or(
+                            inClauses.get(0).getKey() ? cb.not(inClauses.get(0).getValue()) : inClauses.get(0).getValue(),
+                            inClauses.get(1).getKey() ? cb.not(inClauses.get(1).getValue()) : inClauses.get(1).getValue());
+            for (int i = 2; i < inClauses.size(); i++) {
+                inCalusePredicate = operand.equals(Operand.AND) ?
+                        cb.and(inCalusePredicate,
+                             inClauses.get(i).getKey() ? cb.not(inClauses.get(i).getValue()) : inClauses.get(i).getValue())
+                        :
+                        cb.or(inCalusePredicate,
+                                inClauses.get(i).getKey() ? cb.not(inClauses.get(i).getValue()) : inClauses.get(i).getValue());
             }
         }
-
         Predicate regularPredicate = null;
         if(predicates.size() >=2 ){
-            regularPredicate = cb.and(predicates.toArray(new Predicate[predicates.size()]));
+            regularPredicate = operand.equals(Operand.AND) ?
+                                    cb.and(predicates.toArray(new Predicate[predicates.size()]))
+                                    :
+                                    cb.or(predicates.toArray(new Predicate[predicates.size()]));
         }else if(predicates.size() == 1){
             regularPredicate = predicates.get(0);
         }
 
         Predicate finalPredicate = null;
         if(Objects.nonNull(inCalusePredicate) && Objects.nonNull(regularPredicate)){
-            finalPredicate = cb.and(inCalusePredicate, regularPredicate);
+            finalPredicate = operand.equals(Operand.AND) ?
+                    cb.and(inCalusePredicate, regularPredicate)
+                    :
+                    cb.or(inCalusePredicate, regularPredicate);
         }else if(Objects.nonNull(regularPredicate)){
             finalPredicate = regularPredicate;
         }else if(Objects.nonNull(inCalusePredicate)){
@@ -108,21 +118,49 @@ public class ProductRepositoryImpl{
         }
 
         if(inClauses.size() > 0 && Objects.nonNull(finalPredicate)) {
-            query.select(product).where(cb.and(
-                                  inClauses.get(0).getKey() ?
-                                  cb.not(inClauses.get(0).getValue()) :
-                                  inClauses.get(0).getValue(),
-                                  finalPredicate));
+            return cb.and(
+                    inClauses.get(0).getKey() ? cb.not(inClauses.get(0).getValue()) : inClauses.get(0).getValue(), finalPredicate);
         }else if(Objects.nonNull(finalPredicate)){
-            query.select(product).where(finalPredicate);
+            return finalPredicate;
         }else if(inClauses.size() > 0) {
-            query.select(product).where(inClauses.get(0).getKey() ?
-                              cb.not(inClauses.get(0).getValue()) :
-                              inClauses.get(0).getValue());
-        }else{
+            return inClauses.get(0).getKey() ? cb.not(inClauses.get(0).getValue()) : inClauses.get(0).getValue();
+        }else {
             throw new Exception("Failed to create a Query with provided Filters.");
         }
+    }
 
+    private Predicate processPredicates(PredicateNode predicateNode, CriteriaBuilder cb,
+                                        CriteriaQuery<Product> query, Root<Product> product){
+        Operand operand = predicateNode.operand;
+        Predicate leftPredicate = null;
+        Predicate rightPredicate = null;
+        try{
+            if(Objects.nonNull(predicateNode.leftFilterNode)) {
+                leftPredicate = processFilterNode(predicateNode.leftFilterNode, cb, query, product);
+            }
+            if(Objects.nonNull(predicateNode.rightFilterNode)) {
+                rightPredicate = processFilterNode(predicateNode.rightFilterNode, cb, query, product);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        if(Objects.nonNull(leftPredicate) && Objects.nonNull(rightPredicate)){
+            return operand.equals(Operand.AND) ?
+                    cb.and(leftPredicate, rightPredicate)
+                    :
+                    cb.or(leftPredicate, rightPredicate);
+        }else if(Objects.nonNull(leftPredicate)){
+            return leftPredicate;
+        }
+        return rightPredicate;
+    }
+
+    public List<Product> findAllProducts(SearchCriteria searchCriteria) throws Exception {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Product> query = cb.createQuery(Product.class);
+        Root<Product> product = query.from(Product.class);
+        Predicate predicate = processPredicates(searchCriteria.predicateNode, cb, query, product);
+        query.select(product).where(predicate);
         if(Objects.nonNull(searchCriteria.sort)){
             if(searchCriteria.sort.isAsc) {
                 query.orderBy(cb.asc(product.get(searchCriteria.sort.fieldName)));
@@ -134,7 +172,6 @@ public class ProductRepositoryImpl{
         typedQuery.setMaxResults(searchCriteria.page.pageSize);
         typedQuery.setFirstResult(searchCriteria.page.pageSize * searchCriteria.page.pageNumber);
         return typedQuery.getResultList();
-
     }
 
     public Long findAllProductsCount(List<Filter> filters) throws Exception {
@@ -144,7 +181,7 @@ public class ProductRepositoryImpl{
         List<Predicate> predicates = new ArrayList<>();
         List<Map.Entry<Boolean,In>> inClauses = new ArrayList<>();
         for (Filter filter : filters) {
-            if (filter.operator.equals(Operators.IN)) {
+            if (filter.operator.equals(Operator.IN)) {
                 try {
                     String className = Product.class.getField(filter.fieldName).getType().getName();
                     In inClause = cb.in(product.get(filter.fieldName));
