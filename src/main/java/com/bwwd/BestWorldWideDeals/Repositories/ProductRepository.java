@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 // This interface will be automatically populated by JPA
 @Repository
@@ -43,4 +44,11 @@ public interface ProductRepository extends JpaRepository<Product,Long >{
 
     Long findAllProductsCount(List<Filter> filters);
 
+    @Modifying(clearAutomatically = true)
+    @Query(value = "Select Distinct category, subcategory From product_details", nativeQuery = true)
+    List<Object[]> selectAllProductSubCategories();
+
+    @Modifying(clearAutomatically = true)
+    @Query(value = "Select Distinct source From product_details", nativeQuery = true)
+    List<String> getAllProductSources();
 }

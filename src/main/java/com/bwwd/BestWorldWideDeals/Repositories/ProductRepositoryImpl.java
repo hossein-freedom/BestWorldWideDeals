@@ -33,13 +33,16 @@ public class ProductRepositoryImpl{
                 try {
                     String className = Product.class.getField(filter.fieldName).getType().getName();
                     In inClause = cb.in(product.get(filter.fieldName));
-                    if (className.equals("java.lang.Double") || className.equals("java.lang.Long")) {
+                    if (className.equals("java.lang.Double")) {
                         List<Number> nums = (List<Number>) filter.fieldValue;
                         nums.stream().forEach(n -> inClause.value(n));
                     } else if (className.equals("java.lang.String")) {
                         List<String> strs = (List<String>) filter.fieldValue;
                         strs.stream().forEach(s -> inClause.value(s));
-                    } else {
+                    } else if(className.equals("com.bwwd.BestWorldWideDeals.Models.Source")){
+                        List<String> strs = (List<String>) filter.fieldValue;
+                        strs.stream().forEach(s -> inClause.value(Source.valueOf(s)));
+                    }else {
                         throw new Exception("Failed to prepare Query for Operatos IN.");
                     }
                     inClauses.add(new AbstractMap.SimpleEntry<>(filter.isNegate,inClause));
@@ -63,6 +66,7 @@ public class ProductRepositoryImpl{
                     break;
                 case LE:
                     predicate = cb.le(product.get(filter.fieldName), (Number) filter.fieldValue);
+                    break;
                 case LIKE:
                     predicate = cb.like(product.get(filter.fieldName), (String) filter.fieldValue);
                     break;
@@ -160,7 +164,7 @@ public class ProductRepositoryImpl{
         CriteriaQuery<Product> query = cb.createQuery(Product.class);
         Root<Product> product = query.from(Product.class);
         Predicate predicate = processPredicates(searchCriteria.predicateNode, cb, query, product);
-        query.select(product).where(predicate);
+        query.select(product).distinct(true).where(predicate);
         if(Objects.nonNull(searchCriteria.sort)){
             if(searchCriteria.sort.isAsc) {
                 query.orderBy(cb.asc(product.get(searchCriteria.sort.fieldName)));

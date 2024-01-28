@@ -3,12 +3,14 @@ package com.bwwd.BestWorldWideDeals.Controllers;
 import com.bwwd.BestWorldWideDeals.Models.Filter;
 import com.bwwd.BestWorldWideDeals.Models.Product;
 import com.bwwd.BestWorldWideDeals.Models.SearchCriteria;
+import com.bwwd.BestWorldWideDeals.Models.Source;
 import com.bwwd.BestWorldWideDeals.Orchestrators.ProductOrchestrator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.util.List;
 import java.util.Map;
@@ -141,9 +143,27 @@ public class ProductsController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-
     @ResponseBody
     List<String> getProductSubCategories(@PathVariable("category") String category) {
         return productOrchestrator.getProductSubCategories(category);
     }
+
+    @RequestMapping(
+            value ="/getallproductsubcategories",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    Map<String, List<String>> getAllProductSubCategories() {
+        return productOrchestrator.getAllProductSubCategories();
+    }
+
+    @RequestMapping(
+            value ="/getallproductsources",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    List<String> getAllProductSources() {
+        return productOrchestrator.getAllProductSources();
+    }
+
 }

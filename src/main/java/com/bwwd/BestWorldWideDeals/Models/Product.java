@@ -20,6 +20,7 @@ public class Product {
     @Column(name = "p_id", updatable = false, nullable = false)
     public Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "source")
     public Source source;
 

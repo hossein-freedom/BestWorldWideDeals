@@ -2,6 +2,7 @@ package com.bwwd.BestWorldWideDeals.Orchestrators;
 
 import com.bwwd.BestWorldWideDeals.Models.Filter;
 import com.bwwd.BestWorldWideDeals.Models.SearchCriteria;
+import com.bwwd.BestWorldWideDeals.Models.Source;
 import com.bwwd.BestWorldWideDeals.Repositories.ProductRepository;
 import com.bwwd.BestWorldWideDeals.Models.Product;
 import lombok.NoArgsConstructor;
@@ -9,10 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
+import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 // This interface will be automatically populated by JPA
@@ -79,6 +79,24 @@ public class ProductOrchestrator {
 
     public List<String> getProductSubCategories(String category){
         return productRepository.selectProductSubCategories(category);
+    }
+
+    public List<String> getAllProductSources(){
+        return productRepository.getAllProductSources();
+    }
+
+    public Map<String, List<String>> getAllProductSubCategories(){
+        List<Object[]> result = productRepository.selectAllProductSubCategories();
+        Map<String, List<String>> output = new HashMap<>();
+        for(Object[] entry: result){
+            if(output.containsKey((String)entry[0])){
+                output.get((String)entry[0]).add((String)entry[1]);
+            }else{
+                output.put((String)entry[0], new ArrayList<>());
+                output.get((String)entry[0]).add((String)entry[1]);
+            }
+        }
+        return output;
     }
 
 }
