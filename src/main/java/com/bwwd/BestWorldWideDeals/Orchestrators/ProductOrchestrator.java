@@ -1,10 +1,7 @@
 package com.bwwd.BestWorldWideDeals.Orchestrators;
 
-import com.bwwd.BestWorldWideDeals.Models.Filter;
-import com.bwwd.BestWorldWideDeals.Models.SearchCriteria;
-import com.bwwd.BestWorldWideDeals.Models.Source;
+import com.bwwd.BestWorldWideDeals.Models.*;
 import com.bwwd.BestWorldWideDeals.Repositories.ProductRepository;
-import com.bwwd.BestWorldWideDeals.Models.Product;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,12 +62,12 @@ public class ProductOrchestrator {
 
     }
 
-    public List<Product> getProductsByFilter(SearchCriteria searchCriteria){
+    public ProductSearchResult getProductsByFilter(SearchCriteria searchCriteria){
         return productRepository.findAllProducts(searchCriteria);
     }
 
-    public Long getProductsCountByFilter(List<Filter> filters){
-        return productRepository.findAllProductsCount(filters);
+    public Long getProductsCountByFilter(SearchCriteria searchCriteria){
+        return productRepository.findAllProductsCount(searchCriteria);
     }
 
     public List<String> getProductCategories(){
@@ -99,4 +96,20 @@ public class ProductOrchestrator {
         return output;
     }
 
+    public Map<String, List<String>> getCategorySubcategoryByFilter(SearchCriteria searchCriteria) {
+        return productRepository.getCategorySubcategoryByFilter(searchCriteria);
+    }
+
+    public Map<String, String> login(String userName, String password) {
+        List<String> result = productRepository.login(userName, password);
+        if(result.size() > 0){
+            return Map.of("Status", "Successful");
+        }else{
+            return Map.of("Status", "Failed");
+        }
+    }
+
+    public List<Source> getSourcesByFilter(SearchCriteria searchCriteria){
+        return productRepository.getSourcesByFilter(searchCriteria);
+    }
 }

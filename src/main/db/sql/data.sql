@@ -55,3 +55,12 @@ GRANT ALL PRIVILEGES ON TABLE products.product_images to bwwd_admin;
 
 ALTER TABLE products.product_images ADD FOREIGN KEY (p_id) REFERENCES products.product_details(p_id);
 
+CREATE TABLE products.users(
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(250),
+    password VARCHAR(250)
+);
+
+GRANT ALL PRIVILEGES ON TABLE products.users to bwwd_admin;
+
+INSERT into products.users(username,password) VALUES('admin','admin');

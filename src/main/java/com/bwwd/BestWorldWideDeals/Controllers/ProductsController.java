@@ -1,9 +1,6 @@
 package com.bwwd.BestWorldWideDeals.Controllers;
 
-import com.bwwd.BestWorldWideDeals.Models.Filter;
-import com.bwwd.BestWorldWideDeals.Models.Product;
-import com.bwwd.BestWorldWideDeals.Models.SearchCriteria;
-import com.bwwd.BestWorldWideDeals.Models.Source;
+import com.bwwd.BestWorldWideDeals.Models.*;
 import com.bwwd.BestWorldWideDeals.Orchestrators.ProductOrchestrator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -105,14 +102,14 @@ public class ProductsController {
     }
 
     @RequestMapping(
-            value ="/getproductsbyfilter",
+            value ="/getproducts",
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
 
     @ResponseBody
-    List<Product> getProductsByFilter(@RequestBody SearchCriteria searchCriteria) {
+    ProductSearchResult getProducts(@RequestBody SearchCriteria searchCriteria) {
         return productOrchestrator.getProductsByFilter(searchCriteria);
     }
     @RequestMapping(
@@ -123,8 +120,8 @@ public class ProductsController {
     )
 
     @ResponseBody
-    Long getProductsCountByFilter(@RequestBody List<Filter> filters) {
-        return productOrchestrator.getProductsCountByFilter(filters);
+    Long getProductsCountByFilter(@RequestBody SearchCriteria searchCriteria) {
+        return productOrchestrator.getProductsCountByFilter(searchCriteria);
     }
 
     @RequestMapping(
@@ -164,6 +161,38 @@ public class ProductsController {
     )
     List<String> getAllProductSources() {
         return productOrchestrator.getAllProductSources();
+    }
+
+    @RequestMapping(
+            value ="/login/{username}/{password}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    Map<String, String> login(@PathVariable("username") String userName,
+                              @PathVariable("password") String password) {
+        return productOrchestrator.login(userName, password);
+    }
+
+    @RequestMapping(
+            value ="/getallproductsourcesbyfilter",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    List<Source> getAllProductSourceByFilter(@RequestBody SearchCriteria searchCriteria){
+        return productOrchestrator.getSourcesByFilter(searchCriteria);
+    }
+
+    @RequestMapping(
+            value ="/getcategorysubcategorybyFilter",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    Map<String, List<String>> getCategorySubcategoryByFilter(@RequestBody SearchCriteria searchCriteria){
+        return productOrchestrator.getCategorySubcategoryByFilter(searchCriteria);
     }
 
 }

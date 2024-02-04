@@ -1,9 +1,6 @@
 package com.bwwd.BestWorldWideDeals.Repositories;
 
-import com.bwwd.BestWorldWideDeals.Models.Filter;
-import com.bwwd.BestWorldWideDeals.Models.Product;
-import com.bwwd.BestWorldWideDeals.Models.SearchCriteria;
-import com.bwwd.BestWorldWideDeals.Models.Source;
+import com.bwwd.BestWorldWideDeals.Models.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -40,9 +37,17 @@ public interface ProductRepository extends JpaRepository<Product,Long >{
     @Query(value = "Select Distinct subcategory From product_details WHERE category = :category", nativeQuery = true)
     List<String> selectProductSubCategories(@Param("category") String category);
 
-    List<Product> findAllProducts(SearchCriteria searchCriteria);
+    @Modifying(clearAutomatically = true)
+    @Query(value = "Select username From users WHERE username = :username AND password = :password", nativeQuery = true)
+    List<String> login(@Param("username") String userName, @Param("password") String password);
 
-    Long findAllProductsCount(List<Filter> filters);
+    ProductSearchResult findAllProducts(SearchCriteria searchCriteria);
+
+    Long findAllProductsCount(SearchCriteria searchCriteria);
+
+    Map<String, List<String>> getCategorySubcategoryByFilter(SearchCriteria searchCriteria);
+
+    List<Source> getSourcesByFilter(SearchCriteria searchCriteria);
 
     @Modifying(clearAutomatically = true)
     @Query(value = "Select Distinct category, subcategory From product_details", nativeQuery = true)
