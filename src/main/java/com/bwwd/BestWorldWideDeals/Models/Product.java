@@ -3,6 +3,7 @@ package com.bwwd.BestWorldWideDeals.Models;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
@@ -25,7 +26,7 @@ public class Product {
     public Source source;
 
     @Column(name = "isactive")
-    public Boolean isActive;
+    public boolean isActive;
 
     @Column(name = "bannercode")
     public String bannerCode;
@@ -49,7 +50,7 @@ public class Product {
     public Double price;
 
     @Column(name = "isonsale")
-    public Boolean isOnSale;
+    public boolean isOnSale;
 
     @Column(name = "saleprice")
     public Double salePrice;

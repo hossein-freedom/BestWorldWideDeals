@@ -27,6 +27,9 @@ public class ProductRepositoryImpl{
                                                         Root<Product> product) throws Exception{
         Operand operand = filterNode.operand;
         List<Filter> filters = filterNode.filters;
+        if(filters.isEmpty()){
+            return null;
+        }
         List<Predicate> predicates = new ArrayList<>();
         List<Map.Entry<Boolean,In>> inClauses = new ArrayList<>();
         for (Filter filter : filters) {
