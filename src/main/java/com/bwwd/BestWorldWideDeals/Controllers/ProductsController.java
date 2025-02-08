@@ -20,7 +20,7 @@ public class ProductsController {
     private ProductOrchestrator productOrchestrator;
 
     @RequestMapping(
-            value ="/allproducts",
+            value ="/api/allproducts",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -28,7 +28,7 @@ public class ProductsController {
     List<Product> getAllProducts() {  return productOrchestrator.getAllProducts();   }
 
     @RequestMapping(
-            value ="/saveproducts",
+            value ="/api/saveproducts",
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -38,7 +38,7 @@ public class ProductsController {
     void saveProducts(@RequestBody List<Product> products) { productOrchestrator.saveAllProducts(products); }
 
     @RequestMapping(
-            value ="/saveproduct",
+            value ="/api/saveproduct",
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -51,7 +51,7 @@ public class ProductsController {
     }
 
     @RequestMapping(
-            value ="/deleteproduct/{id}",
+            value ="/api/deleteproduct/{id}",
             method = RequestMethod.DELETE
     )
 
@@ -62,7 +62,7 @@ public class ProductsController {
     }
 
     @RequestMapping(
-            value ="/deleteproducts",
+            value ="/api/deleteproducts",
             method = RequestMethod.DELETE,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -75,7 +75,7 @@ public class ProductsController {
 
 
     @RequestMapping(
-            value ="/updateproduct",
+            value ="/api/updateproduct",
             method = RequestMethod.PUT,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -87,7 +87,7 @@ public class ProductsController {
     }
 
     @RequestMapping(
-            value ="/getproduct/{pid}",
+            value ="/api/getproduct/{pid}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -102,7 +102,7 @@ public class ProductsController {
     }
 
     @RequestMapping(
-            value ="/getproducts",
+            value ="/api/getproducts",
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -113,7 +113,7 @@ public class ProductsController {
         return productOrchestrator.getProductsByFilter(searchCriteria);
     }
     @RequestMapping(
-            value ="/getproductscountbyfilter",
+            value ="/api/getproductscountbyfilter",
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -125,7 +125,7 @@ public class ProductsController {
     }
 
     @RequestMapping(
-            value ="/getproductcategories",
+            value ="/api/getproductcategories",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -136,7 +136,7 @@ public class ProductsController {
     }
 
     @RequestMapping(
-            value ="/getproductsubcategories/{category}",
+            value ="/api/getproductsubcategories/{category}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -146,7 +146,7 @@ public class ProductsController {
     }
 
     @RequestMapping(
-            value ="/getallproductsubcategories",
+            value ="/api/getallproductsubcategories",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -155,7 +155,7 @@ public class ProductsController {
     }
 
     @RequestMapping(
-            value ="/getallproductsources",
+            value ="/api/getallproductsources",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -164,7 +164,7 @@ public class ProductsController {
     }
 
     @RequestMapping(
-            value ="/login/{username}/{password}",
+            value ="/api/login/{username}/{password}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -174,7 +174,7 @@ public class ProductsController {
     }
 
     @RequestMapping(
-            value ="/getallproductsourcesbyfilter",
+            value ="/api/getallproductsourcesbyfilter",
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -185,7 +185,7 @@ public class ProductsController {
     }
 
     @RequestMapping(
-            value ="/getcategorysubcategorybyFilter",
+            value ="/api/getcategorysubcategorybyFilter",
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE

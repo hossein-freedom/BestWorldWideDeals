@@ -4,11 +4,11 @@ FROM pg_stat_activity
 WHERE pg_stat_activity.datname = 'bwwd' -- ← change this to your DB
   AND pid <> pg_backend_pid();
 
-DROP DATABASE IF EXISTS  bwwd;
+--DROP DATABASE IF EXISTS  bwwd;
 
 CREATE DATABASE bwwd;
 
-DROP SCHEMA IF EXISTS  products;
+--DROP SCHEMA IF EXISTS  products;
 
 Alter DATABASE  bwwd  SET SEARCH_PATH TO products;
 
@@ -16,10 +16,12 @@ Alter DATABASE  bwwd  SET SEARCH_PATH TO products;
 
 CREATE SCHEMA products;
 
-DROP OWNED BY bwwd_admin;
-DROP USER IF EXISTS bwwd_admin;
+--
+--DROP USER IF EXISTS bwwd_admin;
+--
+--DROP OWNED BY bwwd_admin;
 
-CREATE USER bwwd_admin with encrypted password 'adminbwwd';
+--CREATE USER bwwd_admin with encrypted password 'adminbwwd';
 
 GRANT ALL PRIVILEGES ON DATABASE bwwd to bwwd_admin;
 

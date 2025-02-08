@@ -19,7 +19,7 @@ public class ProductImageController {
     private ProductImageOrchestrator productImageRepository;
 
     @RequestMapping(
-            value ="/uploadimages/{pid}",
+            value ="/api/uploadimages/{pid}",
             method = RequestMethod.POST,
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -32,7 +32,7 @@ public class ProductImageController {
     }
 
     @RequestMapping(
-            value ="/deleteimages",
+            value ="/api/deleteimages",
             method = RequestMethod.DELETE,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -44,7 +44,7 @@ public class ProductImageController {
 
 
     @RequestMapping(
-            value ="/getimagesforproduct/{pid}",
+            value ="/api/getimagesforproduct/{pid}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )

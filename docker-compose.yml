@@ -1,0 +1,48 @@
+version: "3.8"
+services:
+  db:
+    image: 'hosseindockerhub/bwwd_db:latest'
+    container_name: db
+    environment:
+      - POSTGRES_USER=bwwd_admin
+      - POSTGRES_PASSWORD=adminbwwd
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - app-db
+    ports:
+      - '5432:5432'
+  app:
+    image: 'hosseindockerhub/bwwd:latest'
+    deploy:
+      mode: replicated
+      replicas: 1
+      endpoint_mode: vip
+    networks:
+      - app-db
+      - app-ui
+    ports:
+      - '8080:8080'
+    environment:
+      - POSTGRES_USER=bwwd_admin
+      - POSTGRES_PASSWORD=adminbwwd
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/bwwd
+      - SPRING_DATASOURCE_USERNAME=bwwd_admin
+      - SPRING_DATASOURCE_PASSWORD=adminbwwd
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      - db
+  ui:
+    image: 'hosseindockerhub/bwwd_webassets:latest'
+    container_name: bwwd_ui
+    networks:
+      - app-ui
+    ports:
+      - '3000:3000'
+    depends_on:
+      - app
+volumes:
+  db-data:
+networks:
+  app-db:
+  app-ui:
