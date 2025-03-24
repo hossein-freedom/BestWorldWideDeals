@@ -11,16 +11,26 @@ echo are you updating DB Image? [y/n]
 read varname
 if [ "$varname" = "y" ] 
 then
-	cd ../BestWorldWideDeals/src/main/db 
+	cd BestWorldWideDeals/src/main/db
 	docker build  -t  hosseindockerhub/bwwd_db .
 	docker push hosseindockerhub/bwwd_db
 	cd ../../../../
 fi
+echo are you updating NGINX Image? [y/n]
+read varname
+if [ "$varname" = "y" ]
+then
+	cd BestWorldWideDeals/src/main/nginx
+	docker build  -t  hosseindockerhub/bwwd_nginx .
+	docker push hosseindockerhub/bwwd_nginx
+	cd ../../../../
+fi
+
 echo are you updating BestWorldWideDeals_WebAssets Image? [y/n]
 read varname
 if [ "$varname" = "y" ]
 then
-  cd ../BestWorldWideDeals_WebAssets
+  cd BestWorldWideDeals_WebAssets
   docker build  -t  hosseindockerhub/bwwd_webassets .
   docker push hosseindockerhub/bwwd_webassets
   cd ../BestWorldWideDeals

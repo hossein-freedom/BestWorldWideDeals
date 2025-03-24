@@ -1,5 +1,12 @@
 version: "3.8"
 services:
+  nginx:
+    image: 'hosseindockerhub/bwwd_nginx:latest'
+    container_name: nginx
+    ports:
+      - '80:80'
+    networks:
+      - app-proxy
   db:
     image: 'hosseindockerhub/bwwd_db:latest'
     container_name: db
@@ -16,13 +23,12 @@ services:
     image: 'hosseindockerhub/bwwd:latest'
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 2
       endpoint_mode: vip
     networks:
       - app-db
       - app-ui
-    ports:
-      - '8080:8080'
+      - app-proxy
     environment:
       - POSTGRES_USER=bwwd_admin
       - POSTGRES_PASSWORD=adminbwwd
@@ -37,12 +43,12 @@ services:
     container_name: bwwd_ui
     networks:
       - app-ui
+      - app-proxy
     ports:
       - '3000:3000'
-    depends_on:
-      - app
 volumes:
   db-data:
 networks:
   app-db:
   app-ui:
+  app-proxy:
