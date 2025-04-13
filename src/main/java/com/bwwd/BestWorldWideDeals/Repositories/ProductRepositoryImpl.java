@@ -167,13 +167,13 @@ public class ProductRepositoryImpl{
         return rightPredicate;
     }
 
-    public Map<String, List<String>> getCategorySubcategoryByFilter(SearchCriteria searchCriteria) throws Exception{
+    public Map<String, Set<String>> getCategorySubcategoryByFilter(SearchCriteria searchCriteria) throws Exception{
         searchCriteria.page.setPageSize(10000);
         List<Product> products = findAllProducts(searchCriteria).getProducts();
-        Map<String, List<String>> output = new HashMap<>();
+        Map<String, Set<String>> output = new HashMap<>();
         products.stream().forEach( product -> {
             if (!output.containsKey(product.category)){
-                output.put(product.category, new ArrayList<>());
+                output.put(product.category, new HashSet<>());
             }
             output.get(product.category).add(product.subCategory);
         });

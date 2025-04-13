@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 // This interface will be automatically populated by JPA
 @Repository
@@ -45,7 +46,7 @@ public interface ProductRepository extends JpaRepository<Product,Long >{
 
     Long findAllProductsCount(SearchCriteria searchCriteria);
 
-    Map<String, List<String>> getCategorySubcategoryByFilter(SearchCriteria searchCriteria);
+    Map<String, Set<String>> getCategorySubcategoryByFilter(SearchCriteria searchCriteria);
 
     List<Source> getSourcesByFilter(SearchCriteria searchCriteria);
 

@@ -30,6 +30,8 @@ services:
       - app-ui
       - app-proxy
     environment:
+      - S3_ACCESS_KEY=AKIA5N4IHKZKCXBK4P7E
+      - S3_SECRET_KEY=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
       - POSTGRES_USER=bwwd_admin
       - POSTGRES_PASSWORD=adminbwwd
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/bwwd

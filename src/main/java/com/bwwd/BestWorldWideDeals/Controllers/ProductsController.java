@@ -12,6 +12,7 @@ import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 @RestController
 public class ProductsController {
@@ -191,7 +192,7 @@ public class ProductsController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody
-    Map<String, List<String>> getCategorySubcategoryByFilter(@RequestBody SearchCriteria searchCriteria){
+    Map<String, Set<String>> getCategorySubcategoryByFilter(@RequestBody SearchCriteria searchCriteria){
         return productOrchestrator.getCategorySubcategoryByFilter(searchCriteria);
     }
 

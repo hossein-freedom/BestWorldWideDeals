@@ -4,57 +4,63 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.async.AsyncRequestBody;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.waiters.WaiterOverrideConfiguration;
 import software.amazon.awssdk.core.waiters.WaiterResponse;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
 import software.amazon.awssdk.services.s3.waiters.S3Waiter;
 import java.io.File;
 import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
 
 public class S3Dao {
+
     private static Logger logger = LoggerFactory.getLogger(S3Dao.class);
-    private static final String ACCESS_KEY  = "AKIA5N4IHKZKC5YTUYJW";
-    private static final String SECRET_KEY  = "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";
+    private static final String ACCESS_KEY  = "S3_ACCESS_KEY";
+    private static final String SECRET_KEY  = "S3_SECRET_KEY";
     private static final String BUCKET_NAME = "bwwd-listing-images";
     public static boolean writeImageToS3(String folder,
                                       String imageName,
                                       String filePath){
         logger.info(String.format("Received request to write file => %s into folder => %s into S3.",imageName, folder));
         AwsBasicCredentials credentials = AwsBasicCredentials.create(
-                ACCESS_KEY,
-                SECRET_KEY
+                System.getenv(ACCESS_KEY),
+                System.getenv(SECRET_KEY)
         );
         String key = String.format("%s/%s",folder,imageName);
-        S3Client s3Client = S3Client.builder()
+        S3AsyncClient client = S3AsyncClient.builder()
                 .region(Region.US_EAST_2)
                 .credentialsProvider(StaticCredentialsProvider.create(credentials))
                 .build();
+        PutObjectRequest objectRequest = PutObjectRequest.builder()
+                .bucket(BUCKET_NAME)
+                .key(key)
+                .build();
         try {
-            PutObjectRequest putOb = PutObjectRequest.builder()
-                    .bucket(BUCKET_NAME)
-                    .key(key)
-                    .build();
-            s3Client.putObject(putOb, RequestBody.fromFile(new File(filePath)));
-            S3Waiter waiter = s3Client.waiter();
-            HeadObjectRequest requestWait = HeadObjectRequest.builder().bucket(BUCKET_NAME).key(key).build();
-            WaiterOverrideConfiguration waiterOverrideConfiguration = WaiterOverrideConfiguration.builder()
-                    .waitTimeout(Duration.ofSeconds(5L)).build();
-            WaiterResponse<HeadObjectResponse> waiterResponse = waiter.waitUntilObjectExists(requestWait,
-                                                                            waiterOverrideConfiguration);
-            if(waiterResponse.matched().response().isPresent()) {
-                logger.info(String.format("Successfully wrote file => %s into folder => %s into S3.", imageName, folder));
-                return true;
-            }else{
-                logger.error(String.format("Failed to write file => %s into folder => %s into S3 in less than 5 " +
-                        "seconds.",imageName, folder));
-                return false;
-            }
-        } catch (S3Exception e) {
-            logger.error(String.format("Failed to write file => %s into folder => %s into S3.",imageName, folder));
-            logger.error(e.getMessage());
+            // Put the object into the bucket
+            CompletableFuture<PutObjectResponse> future = client.putObject(objectRequest,
+                    AsyncRequestBody.fromFile(new File(filePath))
+            );
+            future.whenComplete((resp, err) -> {
+                try {
+                    if (resp != null) {
+                        logger.info(String.format("Successfully wrote file => %s into folder => %s into S3.", imageName, folder));
+                    } else {
+                        logger.error(String.format("Failed to write file => %s into folder => %s into S3.",imageName, folder));
+                        logger.error(err.getMessage());
+                    }
+                } finally {
+                    // Only close the client when you are completely done with it
+                    client.close();
+                }
+            });
+            future.join();
+            return true;
+        } catch (Exception e) {
             return false;
         }
     }
@@ -66,7 +72,7 @@ public class S3Dao {
                 ACCESS_KEY,
                 SECRET_KEY
         );
-        S3Client s3Client = S3Client.builder()
+        S3AsyncClient client = S3AsyncClient.builder()
                 .region(Region.US_EAST_2)
                 .credentialsProvider(StaticCredentialsProvider.create(credentials))
                 .build();
@@ -75,28 +81,24 @@ public class S3Dao {
                     .bucket(BUCKET_NAME)
                     .key(String.format("%s/%s",folder,imageName))
                     .build();
-            s3Client.deleteObject(deleteOb);
-            S3Waiter waiter = s3Client.waiter();
-            HeadObjectRequest requestWait = HeadObjectRequest.builder()
-                    .bucket(BUCKET_NAME)
-                    .key(String.format("%s/%s",folder,imageName))
-                    .build();
-            WaiterOverrideConfiguration waiterOverrideConfiguration = WaiterOverrideConfiguration.builder()
-                    .waitTimeout(Duration.ofSeconds(5L)).build();
-            WaiterResponse<HeadObjectResponse> waiterResponse = waiter.waitUntilObjectNotExists(requestWait,
-                    waiterOverrideConfiguration);
-            if(!waiterResponse.matched().response().isPresent()) {
-                logger.info(String.format("Successfully deleted files => %s from folder => %s in S3.",
-                        imageName, folder));
-                return true;
-            }else{
-                logger.error(String.format("Failed to delete file => %s from folder => %s into S3 in less than 5 " +
-                        "seconds.",imageName, folder));
-                return false;
-            }
+            client.deleteObject(deleteOb);
+            CompletableFuture<DeleteObjectResponse> future = client.deleteObject(deleteOb);
+            future.whenComplete((resp, err) -> {
+                try {
+                    if (resp != null) {
+                        logger.info(String.format("Successfully deleted files => %s from folder => %s in S3.", imageName, folder));
+                    } else {
+                        logger.error(String.format("Failed to delete files => %s from folder => %s in S3.", imageName, folder));
+                        logger.error(err.getMessage());
+                    }
+                } finally {
+                    // Only close the client when you are completely done with it
+                    client.close();
+                }
+            });
+            future.join();
+            return true;
         } catch (S3Exception e) {
-            logger.error(String.format("Failed to delete files => %s from folder => %s in S3.", imageName, folder));
-            logger.error(e.getMessage());
             return false;
         }
     }

@@ -96,7 +96,7 @@ public class ProductOrchestrator {
         return output;
     }
 
-    public Map<String, List<String>> getCategorySubcategoryByFilter(SearchCriteria searchCriteria) {
+    public Map<String, Set<String>> getCategorySubcategoryByFilter(SearchCriteria searchCriteria) {
         return productRepository.getCategorySubcategoryByFilter(searchCriteria);
     }
 
